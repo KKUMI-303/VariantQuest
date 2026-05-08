@@ -1,0 +1,14 @@
+fasterq.*
+SRR1552444/
+data/
+results/
+data/raw/
+data/reference/
+*.fastq
+*.fastq.gz
+*.bam
+*.vcf
+*.tmp*
+*.fq
+*.fasta
+*.fa
