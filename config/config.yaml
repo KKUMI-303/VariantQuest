@@ -1,0 +1,5 @@
+samples:
+  - SRR2762255
+reference: data/reference/reference.fasta
+
+threads: 4
