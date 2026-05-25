@@ -7,7 +7,7 @@ rule all:
     input:
         expand("results/qc/{sample}_{read}_fastqc.html", sample=SAMPLES, read=READS),
 	expand("results/alignments/{sample}.sorted.bam.bai", sample=SAMPLES),
-	expand("results/variants/{sample}.vcf", sample=SAMPLES)
+	expand("results/variants/{sample}.vcf", sample=SAMPLES), "results/multiqc_report.html"
 
 
 rule fastqc:
@@ -135,4 +135,27 @@ rule call_variants:
         -R {input.ref} \
         -I {input.bam} \
         -O {output}
+        """
+
+
+
+rule multiqc:
+    input:
+        expand("results/qc/{sample}_{read}_fastqc.zip",
+               sample=SAMPLES,
+               read=READS)
+
+    output:
+        html="results/multiqc_report.html",
+        data_dir=directory("results/multiqc_data")
+
+    threads:
+        1
+    
+    log:
+       "results/logs/multiqc.log"
+
+    shell:
+        """
+        multiqc results/qc/ -o results/ > {log} 2>&1
         """

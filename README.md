@@ -7,14 +7,15 @@ The workflow processes FASTQ files through quality control, alignment, variant c
 
 # Features
 
-* Quality control with FastQC
-* Read trimming with Trimmomatic
-* Sequence alignment using BWA
-* BAM processing with SAMtools
-* Variant calling with GATK
-* Variant annotation with SnpEff
-* Workflow automation using Snakemake
-* Reproducible Conda environment
+- Quality control with FastQC
+- Aggregated QC reporting with MultiQC
+- Read trimming with Trimmomatic
+- Sequence alignment using BWA
+- BAM processing with SAMtools
+- Variant calling using GATK HaplotypeCaller
+- Variant annotation with SnpEff (Java 21 compatible)
+- Fully automated workflow using Snakemake
+- Reproducible Conda-based environment
 
 
 # Tools Used
@@ -22,6 +23,7 @@ The workflow processes FASTQ files through quality control, alignment, variant c
 | Step                | Tool        |
 | ------------------- | ----------- |
 | Quality Control     | FastQC      |
+| QC Aggregation      | MultiQC     |
 | Trimming            | Trimmomatic |
 | Alignment           | BWA         |
 | BAM Processing      | SAMtools    |
@@ -34,20 +36,24 @@ The workflow processes FASTQ files through quality control, alignment, variant c
 
 ```text
 FASTQ
-  ↓
+↓
 FastQC
-  ↓
-Trimmomatic
-  ↓
-BWA Alignment
-  ↓
-SAMtools Sort/Index
-  ↓
+↓
+MultiQC (QC aggregation)
+↓
+Trimmomatic (read trimming)
+↓
+BWA alignment
+↓
+SAMtools sort + index
+↓
 GATK HaplotypeCaller
-  ↓
-VCF Variants
-  ↓
-SnpEff Annotation
+↓
+VCF generation
+↓
+SnpEff annotation
+↓
+MultiQC report
 ```
 
 
@@ -56,19 +62,24 @@ SnpEff Annotation
 ```text
 VariantQuest/
 ├── config/
+│ └── config.yaml
 ├── data/
-│   ├── raw/
-│   ├── trimmed/
-│   └── reference/
+│ ├── raw/
+│ ├── trimmed/
+│ └── reference/
 ├── results/
-│   ├── qc/
-│   ├── alignments/
-│   ├── variants/
-│   └── reports/
+│ ├── qc/
+│ ├── alignments/
+│ ├── variants/
+│ ├── multiqc_report.html
+│ └── multiqc_data/
 ├── scripts/
 ├── workflow/
 ├── Snakefile
 ├── environment.yml
+├── snpEff_genes.txt
+├── snpEff_summary.html
+├── LICENSE
 └── README.md
 ```
 
