@@ -9,3 +9,6 @@ fasterq.tmp.*
 
 data/
 results/
+
+snpEff_genes.txt
+snpEff_summary.html
