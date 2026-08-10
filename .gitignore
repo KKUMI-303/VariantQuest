@@ -2,8 +2,9 @@
 *.bam
 *.sam
 *.vcf
+
 .snakemake/
-__pycache__/
+**pycache**/
 old_results/
 fasterq.tmp.*
 
@@ -12,3 +13,15 @@ results/
 
 snpEff_genes.txt
 snpEff_summary.html
+
+tests/results*/
+tests/data/raw/*.aln
+Snakefiel.manual_validation_backup
+
+# Dont ignore these files for testing purposes
+!tests/data/
+!tests/data/raw/
+!tests/data/raw/*.fastq
+!tests/data/expected/
+!tests/data/expected/expected.vcf
+!tests/data/reference/

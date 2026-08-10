@@ -1,44 +1,45 @@
 
-configfile: "config/config.yaml"
-
 SAMPLES = config["samples"]
 READS = ["1", "2"]
+RESULTS = config.get("results_dir", "results")
+RAW = config.get("raw_dir", "data/raw")
 rule all:
     input:
-        expand("results/qc/{sample}_{read}_fastqc.html", sample=SAMPLES, read=READS),
-	expand("results/alignments/{sample}.sorted.bam.bai", sample=SAMPLES),
-	expand("results/variants/{sample}.vcf", sample=SAMPLES), "results/multiqc_report.html"
+        expand(f"{RESULTS}/qc/{{sample}}_{{read}}_fastqc.html", sample=SAMPLES, read=READS),
+	expand(f"{RESULTS}/alignments/{{sample}}.sorted.bam.bai", sample=SAMPLES),
+	expand(f"{RESULTS}/variants/{{sample}}.vcf", sample=SAMPLES),
+	f"{RESULTS}/multiqc_report.html"
 
 
 rule fastqc:
     input:
-        "data/raw/{sample}_{read}.fastq"
+        f"{RAW}/{{sample}}_{{read}}.fastq"
 
     output:
-        html="results/qc/{sample}_{read}_fastqc.html",
-        zip="results/qc/{sample}_{read}_fastqc.zip"
+        html=f"{RESULTS}/qc/{{sample}}_{{read}}_fastqc.html",
+        zip=f"{RESULTS}/qc/{{sample}}_{{read}}_fastqc.zip"
 
     threads:
         1
 
     log:
-        "results/logs/{sample}_{read}_fastqc.log"
+        f"{RESULTS}/logs/{{sample}}_{{read}}_fastqc.log"
 
     shell:
         """
-        fastqc {input} -o results/qc/ > {log} 2>&1
+        fastqc {input} -o {RESULTS}/qc/ > {log} 2>&1
         """
 
 rule trim:
     input:
-        r1="data/raw/{sample}_1.fastq",
-        r2="data/raw/{sample}_2.fastq"
+        r1=f"{RAW}/{{sample}}_1.fastq",
+	r2=f"{RAW}/{{sample}}_2.fastq"
 
     output:
-        p1="results/trimmed/{sample}_1P.fastq",
-        u1="results/trimmed/{sample}_1U.fastq",
-        p2="results/trimmed/{sample}_2P.fastq",
-        u2="results/trimmed/{sample}_2U.fastq"
+        p1=f"{RESULTS}/trimmed/{{sample}}_1P.fastq",
+        u1=f"{RESULTS}/trimmed/{{sample}}_1U.fastq",
+        p2=f"{RESULTS}/trimmed/{{sample}}_2P.fastq",
+        u2=f"{RESULTS}/trimmed/{{sample}}_2U.fastq"
 
     threads:
         config["threads"]
@@ -55,11 +56,11 @@ rule trim:
 rule align:
     input:
         ref=config["reference"],
-        r1="results/trimmed/{sample}_1P.fastq",
-        r2="results/trimmed/{sample}_2P.fastq"
+        r1=f"{RESULTS}/trimmed/{{sample}}_1P.fastq",
+	r2=f"{RESULTS}/trimmed/{{sample}}_2P.fastq"
 
     output:
-        "results/alignments/{sample}.sam"
+        f"{RESULTS}/alignments/{{sample}}.sam"
 
     threads:
         config["threads"]
@@ -74,10 +75,10 @@ rule align:
 
 rule sam_to_bam:
     input:
-        "results/alignments/{sample}.sam"
+        f"{RESULTS}/alignments/{{sample}}.sam"
 
     output:
-        "results/alignments/{sample}.bam"
+        f"{RESULTS}/alignments/{{sample}}.bam"
 
     threads:
         config["threads"]
@@ -89,10 +90,10 @@ rule sam_to_bam:
 
 rule sort_bam:
     input:
-        "results/alignments/{sample}.bam"
+        f"{RESULTS}/alignments/{{sample}}.bam"
 
     output:
-        "results/alignments/{sample}.sorted.bam"
+        f"{RESULTS}/alignments/{{sample}}.sorted.bam"
 
     threads:
         config["threads"]
@@ -105,10 +106,10 @@ rule sort_bam:
 
 rule index_bam:
     input:
-        "results/alignments/{sample}.sorted.bam"
+        f"{RESULTS}/alignments/{{sample}}.sorted.bam"
 
     output:
-        "results/alignments/{sample}.sorted.bam.bai"
+        f"{RESULTS}/alignments/{{sample}}.sorted.bam.bai"
 
     threads:
         config["threads"]
@@ -121,10 +122,10 @@ rule index_bam:
 rule call_variants:
     input:
         ref=config["reference"],
-        bam="results/alignments/{sample}.sorted.bam"
+        bam=f"{RESULTS}/alignments/{{sample}}.sorted.bam"
 
     output:
-        "results/variants/{sample}.vcf"
+        f"{RESULTS}/variants/{{sample}}.vcf"
 
     threads:
         config["threads"]
@@ -141,21 +142,21 @@ rule call_variants:
 
 rule multiqc:
     input:
-        expand("results/qc/{sample}_{read}_fastqc.zip",
+        expand(f"{RESULTS}/qc/{{sample}}_{{read}}_fastqc.zip",
                sample=SAMPLES,
                read=READS)
 
     output:
-        html="results/multiqc_report.html",
-        data_dir=directory("results/multiqc_data")
+        html=f"{RESULTS}/multiqc_report.html",
+	data_dir=directory(f"{RESULTS}/multiqc_data")
 
     threads:
         1
     
     log:
-       "results/logs/multiqc.log"
+       f"{RESULTS}/logs/multiqc.log"
 
     shell:
         """
-        multiqc results/qc/ -o results/ > {log} 2>&1
+        multiqc {RESULTS}/qc/ -o {RESULTS}/
         """
