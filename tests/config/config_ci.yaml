@@ -1,0 +1,10 @@
+samples:
+  - ci_samples
+
+reference: tests/data/reference/ecoli_ci.fa
+
+threads: 2
+
+results_dir: tests/results_ci
+
+raw_dir: tests/data/raw

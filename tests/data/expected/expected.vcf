@@ -1,0 +1,10 @@
+##fileformat=VCFv4.2
+##source=VariantQuest_CI
+##reference=ecoli.fa
+##truth_set=mutations.tsv
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+NC_002695.2	10000	.	T	A	.	PASS	.
+NC_002695.2	50000	.	G	T	.	PASS	.
+NC_002695.2	100000	.	A	G	.	PASS	.
+NC_002695.2	250000	.	T	C	.	PASS	.
+NC_002695.2	400000	.	T	A	.	PASS	.
