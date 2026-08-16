@@ -6,7 +6,7 @@ The workflow processes FASTQ files through quality control, alignment, variant c
 
 
 # Features
-
+- (*NEW*) CI GitHub Actions - Automatically test changes to the workflow when pushed to GitHub
 - Quality control with FastQC
 - Aggregated QC reporting with MultiQC
 - Read trimming with Trimmomatic
@@ -28,7 +28,6 @@ The workflow processes FASTQ files through quality control, alignment, variant c
 | Alignment           | BWA         |
 | BAM Processing      | SAMtools    |
 | Variant Calling     | GATK        |
-| Annotation          | SnpEff      |
 | Workflow Management | Snakemake   |
 
 
@@ -50,8 +49,6 @@ SAMtools sort + index
 GATK HaplotypeCaller
 ↓
 VCF generation
-↓
-SnpEff annotation
 ↓
 MultiQC report
 ```
@@ -77,8 +74,6 @@ VariantQuest/
 ├── workflow/
 ├── Snakefile
 ├── environment.yml
-├── snpEff_genes.txt
-├── snpEff_summary.html
 ├── LICENSE
 └── README.md
 ```
@@ -95,11 +90,16 @@ conda activate variantquest
 
 
 # Run Pipeline
+For production
 
 ```bash
-snakemake --cores 4
+snakemake --cores 4 --configfile config/config.yaml
 ```
 
+For running tests
+```bash
+snakemake --cores 2 --configfile tests/config/config.yaml
+```
 
 # Outputs
 
@@ -121,14 +121,16 @@ The pipeline generates:
 
 # Notes
 
-SnpEff databases were unavailable for the selected test organism, so a custom annotation database was generated for testing purposes.
+VariantQuest now includes an automated integration test that runs through GitHub Actions on pushes and pull requests.
+
+The CI test does not use the production sequencing data. Instead, it uses a small deterministic synthetic dataset designed specifically for automated testing.
 
 
 # Future Improvements
 
-* Multi-sample variant calling
 * Cloud execution support
 * RNA-seq module integration
+* Multi sample variant calling
 * Interactive reporting dashboard
 
 
