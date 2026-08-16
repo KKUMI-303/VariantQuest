@@ -55,25 +55,49 @@ MultiQC report
 
 
 # Project Structure
-
 ```text
 VariantQuest/
+├── .github/
+│   └── workflows/
+│       └── test.yml
 ├── config/
-│ └── config.yaml
+│   └── config.yaml
 ├── data/
-│ ├── raw/
-│ ├── trimmed/
-│ └── reference/
+│   ├── annotation/
+│   ├── raw/
+│   ├── reference/
+│   └── trimmed/
 ├── results/
-│ ├── qc/
-│ ├── alignments/
-│ ├── variants/
-│ ├── multiqc_report.html
-│ └── multiqc_data/
+│   ├── qc/
+│   ├── alignments/
+│   ├── variants/
+│   ├── trimmed/
+│   ├── logs/
+│   ├── reports/
+│   └── multiqc_data/
 ├── scripts/
 ├── workflow/
+├── tests/
+│   ├── config/
+│   │   ├── config.yaml
+│   ├── data/
+│   │   ├── expected/
+│   │   ├── raw/
+│   │   └── reference/
+│   ├── results/
+│   │   ├── qc/
+│   │   ├── alignments/
+│   │   ├── variants/
+│   │   ├── trimmed/
+│   │   ├── logs/
+│   │   └── multiqc_data/
+│   ├── scripts/
+│   │   └── validate_vcf.py
+│   └── run_test.sh
 ├── Snakefile
 ├── environment.yml
+├── snpEff_genes.txt
+├── snpEff_summary.html
 ├── LICENSE
 └── README.md
 ```
@@ -96,10 +120,11 @@ For production
 snakemake --cores 4 --configfile config/config.yaml
 ```
 
-For running tests
+For running tests locally
 ```bash
-snakemake --cores 2 --configfile tests/config/config.yaml
+bash tests/run_test.sh
 ```
+This runs Snakemake using the CI-specific configuration and then validates the resulting VCF based on the expected VCF.
 
 # Outputs
 
